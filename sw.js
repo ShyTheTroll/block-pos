@@ -1,8 +1,9 @@
-const CACHE = 'block-pos-v1';
+const CACHE = 'block-pos-mobile-v2';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './icon-180.png',
   './icon-192.png',
   './icon-512.png'
 ];
@@ -12,7 +13,5 @@ self.addEventListener('install', e => {
 });
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
-  );
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });

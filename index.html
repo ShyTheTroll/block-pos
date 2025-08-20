@@ -2,83 +2,89 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Block POS — Multi‑Seller</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1117">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Block POS — Mobile</title>
 <style>
   :root{
     --bg:#0f1117; --ink:#e6e8ef; --muted:#282c3a; --card:#171a24; --accent:#7fffb6; --bar:#000;
-    --warn:#ffe28a; --danger:#ff7675; --ok:#7bed9f;
+    --danger:#ff7675;
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+    --safe-left: env(safe-area-inset-left);
+    --safe-right: env(safe-area-inset-right);
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
-  .wrap{max-width:980px;margin:0 auto;padding:16px}
-  .blk{background:var(--card);border:1px solid var(--muted);border-radius:14px;padding:12px 14px;margin:12px 0}
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+        padding: calc(8px + var(--safe-top)) calc(12px + var(--safe-right)) calc(12px + var(--safe-bottom)) calc(12px + var(--safe-left));}
+  .wrap{max-width:980px;margin:0 auto}
+  .blk{background:var(--card);border:1px solid var(--muted);border-radius:14px;padding:12px;margin:12px 0}
   .bar{background:var(--bar);color:#fff;border-radius:10px;padding:10px 12px;font-weight:800;letter-spacing:.3px;margin-bottom:10px;display:flex;justify-content:center}
   .grid{display:grid;gap:10px}
-  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid-2{grid-template-columns:1fr}
+  .grid-3{grid-template-columns:1fr}
+  @media (min-width:720px){ .grid-2{grid-template-columns:repeat(2,1fr)} .grid-3{grid-template-columns:repeat(3,1fr)} }
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   label{font-size:12px;color:#aab0c0;display:block;margin-bottom:6px}
-  input,select,button{background:#0e1222;border:1px solid var(--muted);color:var(--ink);border-radius:12px;padding:10px 12px;outline:0}
+  input,select,button{background:#0e1222;border:1px solid var(--muted);color:var(--ink);border-radius:12px;padding:14px 14px;outline:0;font-size:16px}
+  input[type="number"]{appearance: textfield;}
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0;}
   input[readonly]{opacity:.9}
-  .btn{background:var(--accent);color:#062015;border:0;padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer}
+  .btn{background:var(--accent);color:#062015;border:0;padding:14px 16px;border-radius:12px;font-weight:800;cursor:pointer;min-width:110px}
   .btn.secondary{background:#2b324f;color:var(--ink)}
   .btn.danger{background:var(--danger);color:#2b0d0d}
-  .box{background:#0c1020;border:1px solid var(--muted);border-radius:12px;padding:10px 12px}
   .h{font-weight:800}
-  .right{text-align:right}
   .mono{font-variant-numeric:tabular-nums}
-  .pill{display:inline-flex;gap:8px;align-items:center;background:#0e1429;border:1px dashed var(--muted);padding:6px 10px;border-radius:999px;font-size:12px;color:#aab0c0}
-  .small{font-size:12px;color:#aab0c0}
+  .pill{display:inline-flex;gap:8px;align-items:center;background:#0e1429;border:1px dashed var(--muted);padding:8px 12px;border-radius:999px;font-size:12px;color:#aab0c0}
   .line{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
-  .line span{opacity:.9}
-  .line button{padding:8px 10px}
+  .line button{padding:10px 12px}
+  .toolbar{position:sticky;top:0;z-index:5;background:var(--bg);padding-bottom:8px}
+  .install{position:fixed;right:12px;bottom: calc(16px + var(--safe-bottom));z-index:10}
 </style>
-
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#0f1117">
-  <link rel="apple-touch-icon" href="icon-192.png">
-
 </head>
 <body>
   <div class="wrap">
-
-    <!-- Header with currency + seller selector -->
-    <div class="row" style="justify-content:space-between;margin-bottom:8px">
-      <div class="h" style="font-size:20px">Block POS — Multi‑Seller</div>
+    <div class="toolbar row" style="justify-content:space-between">
+      <div class="h" style="font-size:20px">Block POS — Mobile</div>
       <div class="row">
         <label style="margin:0">Currency</label>
-        <input id="currency" value="$" style="width:60px;text-align:center">
+        <input id="currency" value="$" style="width:70px;text-align:center">
       </div>
     </div>
 
+    <!-- Seller block -->
     <div class="blk">
       <div class="bar">SELLER</div>
-      <div class="row">
-        <div class="row">
-          <label style="margin:0">Choose Seller</label>
+      <div class="grid grid-2">
+        <div>
+          <label>Choose Seller</label>
           <select id="sellerSelect"></select>
         </div>
         <div class="row">
-          <input id="newSellerName" placeholder="Add new seller...">
-          <button class="btn" id="addSellerBtn">Add Seller</button>
+          <input id="newSellerName" placeholder="Add new seller..." style="flex:1;min-width:180px">
+          <button class="btn" id="addSellerBtn">Add</button>
           <button class="btn danger" id="deleteSellerBtn" title="Delete current seller">Delete</button>
         </div>
-        <div class="pill">Each seller has their own numbers and entries</div>
       </div>
+      <div class="pill" style="margin-top:8px">Each seller has separate numbers & entries</div>
     </div>
 
-    <!-- Block 4: Price Breakdown FIRST -->
+    <!-- Price Breakdown FIRST -->
     <div class="blk">
       <div class="bar">PRICE BREAKDOWN (per unit)</div>
       <div class="grid grid-3">
         <div>
           <label>Original Price</label>
-          <input id="orig" type="number" step="0.01" min="0">
+          <input id="orig" type="number" inputmode="decimal" min="0">
         </div>
         <div>
           <label>Markup</label>
-          <input id="markup" type="number" step="0.01" min="0">
+          <input id="markup" type="number" inputmode="decimal" min="0">
         </div>
         <div>
           <label>New Price (auto)</label>
@@ -87,14 +93,14 @@
       </div>
     </div>
 
-    <!-- Block 3: Expected Total SECOND -->
+    <!-- Expected Total SECOND -->
     <div class="blk">
       <div class="bar">EXPECTED TOTAL</div>
       <div class="grid grid-3">
         <div>
           <label>Stock</label>
           <div class="row">
-            <input id="stock" type="number" step="0.001" min="0" placeholder="e.g., 10">
+            <input id="stock" type="number" inputmode="decimal" min="0" placeholder="e.g., 10">
             <input id="unit" placeholder="unit (bottle / g / ml / pcs)" style="min-width:160px">
           </div>
         </div>
@@ -109,21 +115,21 @@
       </div>
     </div>
 
-    <!-- Block 1: Receivable & Collections (with per-seller ledger) -->
+    <!-- Receivable & Collections -->
     <div class="blk">
       <div class="bar">RECEIVABLE & COLLECTIONS</div>
-      <div class="row" style="justify-content:space-between">
-        <div class="row">
-          <label style="margin:0">Mode</label>
+      <div class="grid grid-2">
+        <div>
+          <label>Mode</label>
           <select id="mode">
             <option>By Cash</option>
             <option>By Stock</option>
           </select>
-          <span class="pill small">Entries switch units automatically</span>
+          <div class="pill" style="margin-top:8px">Entries switch units automatically</div>
         </div>
-        <div class="row">
-          <label style="margin:0">Seller Needs to Pay</label>
-          <input id="needsToPay" class="mono right" readonly style="min-width:180px">
+        <div>
+          <label>Seller Needs to Pay</label>
+          <input id="needsToPay" class="mono" readonly>
         </div>
       </div>
 
@@ -131,32 +137,36 @@
         <div>
           <label class="h">Money/Units Received — line by line (per seller)</label>
           <div class="row">
-            <input id="entry" type="number" step="0.001" min="0" placeholder="e.g., 70">
+            <input id="entry" type="number" inputmode="decimal" min="0" placeholder="e.g., 70" style="flex:1">
             <button class="btn" id="add">Add</button>
             <button class="btn secondary" id="clear">Clear</button>
           </div>
-          <div id="lines" style="margin-top:10px; display:grid; gap:6px"></div>
+          <div id="lines" style="margin-top:10px; display:grid; gap:8px"></div>
         </div>
         <div>
           <label class="h">TOTAL</label>
-          <input id="totalDisplay" class="mono right" readonly>
+          <input id="totalDisplay" class="mono" readonly>
           <div class="small" id="totalExplainer"></div>
 
-          <div class="row" style="margin-top:16px">
+          <div class="grid grid-2" style="margin-top:16px">
             <div>
               <label>Money Left</label>
-              <input id="moneyLeft" class="mono right" readonly>
+              <input id="moneyLeft" class="mono" readonly>
             </div>
             <div>
               <label>Stock at Seller</label>
-              <input id="stockLeft" class="mono right" readonly>
+              <input id="stockLeft" class="mono" readonly>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="small">Everything saves locally per seller (localStorage). No server required.</div>
+    <div class="install">
+      <button class="btn" id="installBtn" style="box-shadow:0 6px 18px rgba(0,0,0,.35)">Install App</button>
+    </div>
+
+    <div class="small" style="margin-top:8px">Works offline. Data saves locally per seller.</div>
   </div>
 
 <script>
@@ -189,25 +199,34 @@ const addSellerBtn = $('#addSellerBtn');
 const deleteSellerBtn = $('#deleteSellerBtn');
 const newSellerName = $('#newSellerName');
 
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); deferredPrompt=e; document.getElementById('installBtn').style.display='inline-block';
+});
+document.getElementById('installBtn').addEventListener('click', async ()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt=null;
+});
+
+// PWA SW
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+}
+
 // --- Data model ---
-// sellers = {
-//   "Seller A": { orig, markup, stock, unit, mode, lines: [] }
-// }
 let sellers = {};
-const KEY = 'block_pos_multiseller_v1';
+const KEY = 'block_pos_multiseller_mobile_v1';
 
 function loadAll(){
-  try{
-    sellers = JSON.parse(localStorage.getItem(KEY) || '{}');
-  }catch(e){ sellers = {}; }
+  try{ sellers = JSON.parse(localStorage.getItem(KEY) || '{}'); }catch(e){ sellers = {}; }
   if(!Object.keys(sellers).length){
     sellers = { "Seller A": {orig:50, markup:50, stock:10, unit:"bottle", mode:"By Cash", lines:[]} };
   }
   refreshSellerOptions();
 }
-function saveAll(){
-  localStorage.setItem(KEY, JSON.stringify(sellers));
-}
+function saveAll(){ localStorage.setItem(KEY, JSON.stringify(sellers)); }
 
 function refreshSellerOptions(){
   const cur = sellerSelect.value;
@@ -222,29 +241,27 @@ function refreshSellerOptions(){
 }
 
 function loadSeller(name){
-  const s = sellers[name];
-  if(!s) return;
-  origEl.value   = s.orig ?? 0;
+  const s = sellers[name]; if(!s) return;
+  origEl.value = s.orig ?? 0;
   markupEl.value = s.markup ?? 0;
-  stockEl.value  = s.stock ?? 0;
-  unitEl.value   = s.unit ?? '';
-  modeEl.value   = s.mode ?? 'By Cash';
+  stockEl.value = s.stock ?? 0;
+  unitEl.value = s.unit ?? '';
+  modeEl.value = s.mode ?? 'By Cash';
   lines = Array.isArray(s.lines) ? s.lines : [];
   recalc();
 }
-
 function saveSeller(name){
   if(!sellers[name]) sellers[name] = {};
-  sellers[name].orig   = +origEl.value || 0;
+  sellers[name].orig = +origEl.value || 0;
   sellers[name].markup = +markupEl.value || 0;
-  sellers[name].stock  = +stockEl.value || 0;
-  sellers[name].unit   = unitEl.value || '';
-  sellers[name].mode   = modeEl.value;
-  sellers[name].lines  = lines.slice();
+  sellers[name].stock = +stockEl.value || 0;
+  sellers[name].unit = unitEl.value || '';
+  sellers[name].mode = modeEl.value;
+  sellers[name].lines = lines.slice();
   saveAll();
 }
 
-let lines = []; // active seller's lines
+let lines = [];
 function fmtMoney(n){
   const sym = currencyEl.value || '$';
   const v = isFinite(+n) ? (+n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : '0.00';
@@ -253,22 +270,19 @@ function fmtMoney(n){
 function fmtQty(n){ return isFinite(+n) ? (+n).toLocaleString(undefined,{maximumFractionDigits:3}) : '0'; }
 
 function recalc(){
-  // Price breakdown
   const op = +origEl.value || 0;
   const mk = +markupEl.value || 0;
   const price = op + mk;
   newPriceEl.value  = fmtMoney(price);
 
-  // Expected
   const qty = +stockEl.value || 0;
   unitPriceEl.value = fmtMoney(price);
   expectedEl.value  = fmtMoney(qty * price);
   needsEl.value     = fmtMoney(qty * price);
 
-  // Totals from entries
   const mode = modeEl.value;
   const total = lines.reduce((a,b)=>a+(+b||0),0);
-  if(mode === 'By Cash'){
+  if(mode==='By Cash'){
     totalDisplayEl.value = fmtMoney(total);
     totalExplainerEl.textContent = 'Sum of cash entries';
   }else{
@@ -276,13 +290,12 @@ function recalc(){
     totalExplainerEl.textContent = 'Sum of units entries';
   }
 
-  // Effective cash & units
-  const effCash  = (mode === 'By Cash') ? total : total * price;
-  const effUnits = (mode === 'By Stock') ? total : (price>0 ? total/price : 0);
+  const effCash  = (mode==='By Cash') ? total : total * price;
+  const effUnits = (mode==='By Stock') ? total : (price>0 ? total/price : 0);
 
   const expected = qty * price;
   const moneyLeft = expected - effCash;
-  const stockLeft = (mode === 'By Stock') ? (qty - effUnits) : (price>0 ? moneyLeft/price : 0);
+  const stockLeft = (mode==='By Stock') ? (qty - effUnits) : (price>0 ? moneyLeft/price : 0);
 
   moneyLeftEl.value = fmtMoney(moneyLeft);
   stockLeftEl.value = `${fmtQty(stockLeft)} ${unitEl.value||''}`.trim();
@@ -298,17 +311,13 @@ function renderLines(){
     line.className = 'line';
     const left = document.createElement('span');
     left.className = 'mono';
-    if(modeEl.value==='By Cash'){
-      left.textContent = fmtMoney(val);
-    }else{
-      left.textContent = `${fmtQty(val)} ${unitEl.value||''}`.trim();
-    }
+    if(modeEl.value==='By Cash'){ left.textContent = fmtMoney(val); }
+    else { left.textContent = `${fmtQty(val)} ${unitEl.value||''}`.trim(); }
     const btn = document.createElement('button');
     btn.className = 'btn danger';
     btn.textContent = 'Delete';
     btn.onclick = ()=>{ lines.splice(idx,1); recalc(); };
-    line.appendChild(left);
-    line.appendChild(btn);
+    line.appendChild(left); line.appendChild(btn);
     linesBox.appendChild(line);
   });
 }
@@ -316,9 +325,7 @@ function renderLines(){
 addBtn.onclick = ()=>{
   const v = +entryEl.value;
   if(!isFinite(v) || v<=0){ entryEl.focus(); return; }
-  lines.unshift(v);
-  entryEl.value='';
-  recalc();
+  lines.unshift(v); entryEl.value=''; recalc();
 };
 clearBtn.onclick = ()=>{
   if(confirm('Clear all entries for this seller?')){ lines=[]; recalc(); }
@@ -328,38 +335,23 @@ for(const el of [currencyEl,origEl,markupEl,stockEl,unitEl,modeEl]){
   el.addEventListener('input', recalc);
   el.addEventListener('change', recalc);
 }
-
 sellerSelect.addEventListener('change', ()=>loadSeller(sellerSelect.value));
 addSellerBtn.addEventListener('click', ()=>{
-  const name = (newSellerName.value || '').trim();
+  const name = (newSellerName.value||'').trim();
   if(!name) return;
-  if(sellers[name]){ alert('Seller already exists'); return; }
+  if(sellers[name]) return alert('Seller already exists');
   sellers[name] = {orig:50, markup:50, stock:10, unit:'bottle', mode:'By Cash', lines:[]};
-  newSellerName.value='';
-  saveAll();
-  refreshSellerOptions();
-  sellerSelect.value = name;
-  loadSeller(name);
+  newSellerName.value=''; saveAll(); refreshSellerOptions(); sellerSelect.value=name; loadSeller(name);
 });
 deleteSellerBtn.addEventListener('click', ()=>{
   const name = sellerSelect.value;
-  if(Object.keys(sellers).length<=1){ alert('Keep at least one seller.'); return; }
+  if(Object.keys(sellers).length<=1) return alert('Keep at least one seller.');
   if(confirm(`Delete seller "${name}" and all its data?`)){
-    delete sellers[name];
-    saveAll();
-    refreshSellerOptions();
+    delete sellers[name]; saveAll(); refreshSellerOptions();
   }
 });
 
-// init
 loadAll();
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js');
-  });
-}
-
 </script>
 </body>
 </html>
