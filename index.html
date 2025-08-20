@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>Block POS — Mobile</title>
+<title>Block POS — Mobile (Compact)</title>
 <style>
   :root{
     --bg:#0f1117; --ink:#e6e8ef; --muted:#282c3a; --card:#171a24; --accent:#7fffb6; --bar:#000;
@@ -20,40 +20,47 @@
     --safe-right: env(safe-area-inset-right);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{height:100%; -webkit-text-size-adjust:100%;}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
         padding: calc(8px + var(--safe-top)) calc(12px + var(--safe-right)) calc(12px + var(--safe-bottom)) calc(12px + var(--safe-left));}
   .wrap{max-width:980px;margin:0 auto}
-  .blk{background:var(--card);border:1px solid var(--muted);border-radius:14px;padding:12px;margin:12px 0}
-  .bar{background:var(--bar);color:#fff;border-radius:10px;padding:10px 12px;font-weight:800;letter-spacing:.3px;margin-bottom:10px;display:flex;justify-content:center}
-  .grid{display:grid;gap:10px}
+  .blk{background:var(--card);border:1px solid var(--muted);border-radius:14px;padding:10px;margin:10px 0}
+  .bar{background:var(--bar);color:#fff;border-radius:10px;padding:10px 12px;font-weight:800;letter-spacing:.3px;margin-bottom:8px;display:flex;justify-content:center}
+  .grid{display:grid;gap:8px}
   .grid-2{grid-template-columns:1fr}
   .grid-3{grid-template-columns:1fr}
   @media (min-width:720px){ .grid-2{grid-template-columns:repeat(2,1fr)} .grid-3{grid-template-columns:repeat(3,1fr)} }
-  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  label{font-size:12px;color:#aab0c0;display:block;margin-bottom:6px}
-  input,select,button{background:#0e1222;border:1px solid var(--muted);color:var(--ink);border-radius:12px;padding:14px 14px;outline:0;font-size:16px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  label{font-size:12px;color:#aab0c0;display:block;margin-bottom:4px}
+  input,select,button{background:#0e1222;border:1px solid var(--muted);color:var(--ink);border-radius:10px;padding:10px 12px;outline:0;font-size:15px;line-height:1.2}
   input[type="number"]{appearance: textfield;}
   input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0;}
   input[readonly]{opacity:.9}
-  .btn{background:var(--accent);color:#062015;border:0;padding:14px 16px;border-radius:12px;font-weight:800;cursor:pointer;min-width:110px}
+  .btn{background:var(--accent);color:#062015;border:0;padding:10px 12px;border-radius:10px;font-weight:800;cursor:pointer;min-width:96px}
   .btn.secondary{background:#2b324f;color:var(--ink)}
   .btn.danger{background:var(--danger);color:#2b0d0d}
   .h{font-weight:800}
   .mono{font-variant-numeric:tabular-nums}
-  .pill{display:inline-flex;gap:8px;align-items:center;background:#0e1429;border:1px dashed var(--muted);padding:8px 12px;border-radius:999px;font-size:12px;color:#aab0c0}
+  .pill{display:inline-flex;gap:8px;align-items:center;background:#0e1429;border:1px dashed var(--muted);padding:6px 10px;border-radius:999px;font-size:12px;color:#aab0c0}
   .line{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
-  .line button{padding:10px 12px}
-  .toolbar{position:sticky;top:0;z-index:5;background:var(--bg);padding-bottom:8px}
-  .install{position:fixed;right:12px;bottom: calc(16px + var(--safe-bottom));z-index:10}
+  .line button{padding:8px 10px}
+  .toolbar{position:sticky;top:0;z-index:5;background:var(--bg);padding-bottom:6px}
+  .install{position:fixed;right:12px;bottom: calc(14px + var(--safe-bottom));z-index:10}
+  /* Extra compact tweaks for small iPhones (<390px width) */
+  @media (max-width:389px){
+    input,select,button{padding:9px 10px;font-size:14px;border-radius:8px}
+    .btn{min-width:88px}
+    .bar{padding:8px 10px}
+  }
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="toolbar row" style="justify-content:space-between">
-      <div class="h" style="font-size:20px">Block POS — Mobile</div>
+      <div class="h" style="font-size:18px">Block POS — Mobile</div>
       <div class="row">
         <label style="margin:0">Currency</label>
-        <input id="currency" value="$" style="width:70px;text-align:center">
+        <input id="currency" value="$" style="width:64px;text-align:center">
       </div>
     </div>
 
@@ -66,12 +73,12 @@
           <select id="sellerSelect"></select>
         </div>
         <div class="row">
-          <input id="newSellerName" placeholder="Add new seller..." style="flex:1;min-width:180px">
+          <input id="newSellerName" placeholder="Add new seller..." style="flex:1;min-width:160px">
           <button class="btn" id="addSellerBtn">Add</button>
           <button class="btn danger" id="deleteSellerBtn" title="Delete current seller">Delete</button>
         </div>
       </div>
-      <div class="pill" style="margin-top:8px">Each seller has separate numbers & entries</div>
+      <div class="pill" style="margin-top:6px">Each seller has separate numbers & entries</div>
     </div>
 
     <!-- Price Breakdown FIRST -->
@@ -101,7 +108,7 @@
           <label>Stock</label>
           <div class="row">
             <input id="stock" type="number" inputmode="decimal" min="0" placeholder="e.g., 10">
-            <input id="unit" placeholder="unit (bottle / g / ml / pcs)" style="min-width:160px">
+            <input id="unit" placeholder="unit (bottle / g / ml / pcs)" style="min-width:140px">
           </div>
         </div>
         <div>
@@ -125,7 +132,7 @@
             <option>By Cash</option>
             <option>By Stock</option>
           </select>
-          <div class="pill" style="margin-top:8px">Entries switch units automatically</div>
+          <div class="pill" style="margin-top:6px">Entries switch units automatically</div>
         </div>
         <div>
           <label>Seller Needs to Pay</label>
@@ -133,7 +140,7 @@
         </div>
       </div>
 
-      <div class="grid grid-2" style="margin-top:10px">
+      <div class="grid grid-2" style="margin-top:8px">
         <div>
           <label class="h">Money/Units Received — line by line (per seller)</label>
           <div class="row">
@@ -141,14 +148,14 @@
             <button class="btn" id="add">Add</button>
             <button class="btn secondary" id="clear">Clear</button>
           </div>
-          <div id="lines" style="margin-top:10px; display:grid; gap:8px"></div>
+          <div id="lines" style="margin-top:8px; display:grid; gap:8px"></div>
         </div>
         <div>
           <label class="h">TOTAL</label>
           <input id="totalDisplay" class="mono" readonly>
           <div class="small" id="totalExplainer"></div>
 
-          <div class="grid grid-2" style="margin-top:16px">
+          <div class="grid grid-2" style="margin-top:12px">
             <div>
               <label>Money Left</label>
               <input id="moneyLeft" class="mono" readonly>
@@ -162,11 +169,7 @@
       </div>
     </div>
 
-    <div class="install">
-      <button class="btn" id="installBtn" style="box-shadow:0 6px 18px rgba(0,0,0,.35)">Install App</button>
-    </div>
-
-    <div class="small" style="margin-top:8px">Works offline. Data saves locally per seller.</div>
+    <div class="small" style="margin-top:6px">Works offline. Data saves locally per seller.</div>
   </div>
 
 <script>
@@ -199,25 +202,12 @@ const addSellerBtn = $('#addSellerBtn');
 const deleteSellerBtn = $('#deleteSellerBtn');
 const newSellerName = $('#newSellerName');
 
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault(); deferredPrompt=e; document.getElementById('installBtn').style.display='inline-block';
-});
-document.getElementById('installBtn').addEventListener('click', async ()=>{
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  deferredPrompt=null;
-});
+// SW register
+if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js')); }
 
-// PWA SW
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
-}
-
-// --- Data model ---
+// Data model
 let sellers = {};
-const KEY = 'block_pos_multiseller_mobile_v1';
+const KEY = 'block_pos_multiseller_mobile_compact_v1';
 
 function loadAll(){
   try{ sellers = JSON.parse(localStorage.getItem(KEY) || '{}'); }catch(e){ sellers = {}; }
@@ -262,12 +252,8 @@ function saveSeller(name){
 }
 
 let lines = [];
-function fmtMoney(n){
-  const sym = currencyEl.value || '$';
-  const v = isFinite(+n) ? (+n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : '0.00';
-  return `${sym}${v}`;
-}
-function fmtQty(n){ return isFinite(+n) ? (+n).toLocaleString(undefined,{maximumFractionDigits:3}) : '0'; }
+function fmtMoney(n){ const sym = currencyEl.value || '$'; const v = isFinite(+n) ? (+n).toFixed(2) : '0.00'; return `${sym}${v}`; }
+function fmtQty(n){ return isFinite(+n) ? (+n).toString() : '0'; }
 
 function recalc(){
   const op = +origEl.value || 0;
@@ -311,6 +297,7 @@ function renderLines(){
     line.className = 'line';
     const left = document.createElement('span');
     left.className = 'mono';
+    left.style.padding='8px 10px'; left.style.background='#0e1222'; left.style.border='1px solid #282c3a'; left.style.borderRadius='8px';
     if(modeEl.value==='By Cash'){ left.textContent = fmtMoney(val); }
     else { left.textContent = `${fmtQty(val)} ${unitEl.value||''}`.trim(); }
     const btn = document.createElement('button');
@@ -336,14 +323,14 @@ for(const el of [currencyEl,origEl,markupEl,stockEl,unitEl,modeEl]){
   el.addEventListener('change', recalc);
 }
 sellerSelect.addEventListener('change', ()=>loadSeller(sellerSelect.value));
-addSellerBtn.addEventListener('click', ()=>{
-  const name = (newSellerName.value||'').trim();
+document.getElementById('addSellerBtn').addEventListener('click', ()=>{
+  const name = (document.getElementById('newSellerName').value||'').trim();
   if(!name) return;
   if(sellers[name]) return alert('Seller already exists');
   sellers[name] = {orig:50, markup:50, stock:10, unit:'bottle', mode:'By Cash', lines:[]};
-  newSellerName.value=''; saveAll(); refreshSellerOptions(); sellerSelect.value=name; loadSeller(name);
+  document.getElementById('newSellerName').value=''; saveAll(); refreshSellerOptions(); sellerSelect.value=name; loadSeller(name);
 });
-deleteSellerBtn.addEventListener('click', ()=>{
+document.getElementById('deleteSellerBtn').addEventListener('click', ()=>{
   const name = sellerSelect.value;
   if(Object.keys(sellers).length<=1) return alert('Keep at least one seller.');
   if(confirm(`Delete seller "${name}" and all its data?`)){
@@ -352,6 +339,10 @@ deleteSellerBtn.addEventListener('click', ()=>{
 });
 
 loadAll();
+</script>
+<script>
+// register SW late so HTML loads first
+if ('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js');}
 </script>
 </body>
 </html>
