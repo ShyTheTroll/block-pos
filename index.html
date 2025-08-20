@@ -7,13 +7,13 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="manifest.webmanifest?v=4">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>Block POS — Mobile (Compact)</title>
+<title>Block POS — Mobile (Profit)</title>
 <style>
   :root{
     --bg:#0f1117; --ink:#e6e8ef; --muted:#282c3a; --card:#171a24; --accent:#7fffb6; --bar:#000;
-    --danger:#ff7675;
+    --danger:#ff7675; --good:#7bed9f;
     --safe-top: env(safe-area-inset-top);
     --safe-bottom: env(safe-area-inset-bottom);
     --safe-left: env(safe-area-inset-left);
@@ -32,12 +32,12 @@
   @media (min-width:720px){ .grid-2{grid-template-columns:repeat(2,1fr)} .grid-3{grid-template-columns:repeat(3,1fr)} }
   .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   label{font-size:12px;color:#aab0c0;display:block;margin-bottom:4px}
-  input,select,button{background:#0e1222;border:1px solid var(--muted);color:var(--ink);border-radius:10px;padding:10px 12px;outline:0;font-size:15px;line-height:1.2}
+  input,select,button{background:#0e1222;border:1px solid var(--muted);color:#e6e8ef;border-radius:10px;padding:10px 12px;outline:0;font-size:15px;line-height:1.2}
   input[type="number"]{appearance: textfield;}
   input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0;}
   input[readonly]{opacity:.9}
   .btn{background:var(--accent);color:#062015;border:0;padding:10px 12px;border-radius:10px;font-weight:800;cursor:pointer;min-width:96px}
-  .btn.secondary{background:#2b324f;color:var(--ink)}
+  .btn.secondary{background:#2b324f;color:#e6e8ef}
   .btn.danger{background:var(--danger);color:#2b0d0d}
   .h{font-weight:800}
   .mono{font-variant-numeric:tabular-nums}
@@ -45,20 +45,18 @@
   .line{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
   .line button{padding:8px 10px}
   .toolbar{position:sticky;top:0;z-index:5;background:var(--bg);padding-bottom:6px}
-  .install{position:fixed;right:12px;bottom: calc(14px + var(--safe-bottom));z-index:10}
-  /* Extra compact tweaks for small iPhones (<390px width) */
-  @media (max-width:389px){
-    input,select,button{padding:9px 10px;font-size:14px;border-radius:8px}
-    .btn{min-width:88px}
-    .bar{padding:8px 10px}
-  }
+  .kpi{display:flex;gap:8px;align-items:center}
+  .kpi .chip{padding:6px 10px;border-radius:999px;background:#0e1429;border:1px solid var(--muted);font-size:12px}
+  @media (max-width:389px){ input,select,button{padding:9px 10px;font-size:14px;border-radius:8px} .btn{min-width:88px} .bar{padding:8px 10px} }
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="toolbar row" style="justify-content:space-between">
       <div class="h" style="font-size:18px">Block POS — Mobile</div>
-      <div class="row">
+      <div class="row kpi">
+        <span class="chip">Unit GP: <span id="kpiUnitGP">$0.00</span></span>
+        <span class="chip">GP%: <span id="kpiGPpct">0%</span></span>
         <label style="margin:0">Currency</label>
         <input id="currency" value="$" style="width:64px;text-align:center">
       </div>
@@ -86,7 +84,7 @@
       <div class="bar">PRICE BREAKDOWN (per unit)</div>
       <div class="grid grid-3">
         <div>
-          <label>Original Price</label>
+          <label>Original Price (COGS per unit)</label>
           <input id="orig" type="number" inputmode="decimal" min="0">
         </div>
         <div>
@@ -105,7 +103,7 @@
       <div class="bar">EXPECTED TOTAL</div>
       <div class="grid grid-3">
         <div>
-          <label>Stock</label>
+          <label>Stock (units)</label>
           <div class="row">
             <input id="stock" type="number" inputmode="decimal" min="0" placeholder="e.g., 10">
             <input id="unit" placeholder="unit (bottle / g / ml / pcs)" style="min-width:140px">
@@ -169,6 +167,39 @@
       </div>
     </div>
 
+    <!-- GROSS PROFIT -->
+    <div class="blk">
+      <div class="bar">GROSS PROFIT</div>
+      <div class="grid grid-3">
+        <div>
+          <label>Profit per unit</label>
+          <input id="gpUnit" class="mono" readonly>
+        </div>
+        <div>
+          <label>Margin %</label>
+          <input id="gpPct" class="mono" readonly>
+        </div>
+        <div>
+          <label>Expected Profit (all units)</label>
+          <input id="gpExpected" class="mono" readonly>
+        </div>
+      </div>
+      <div class="grid grid-3" style="margin-top:6px">
+        <div>
+          <label>Profit Realized (to date)</label>
+          <input id="gpRealized" class="mono" readonly>
+        </div>
+        <div>
+          <label>Profit Remaining</label>
+          <input id="gpRemaining" class="mono" readonly>
+        </div>
+        <div>
+          <label>Units received so far</label>
+          <input id="unitsCollected" class="mono" readonly>
+        </div>
+      </div>
+    </div>
+
     <div class="small" style="margin-top:6px">Works offline. Data saves locally per seller.</div>
   </div>
 
@@ -197,17 +228,27 @@ const totalExplainerEl = $('#totalExplainer');
 const moneyLeftEl = $('#moneyLeft');
 const stockLeftEl = $('#stockLeft');
 
+// Profit fields
+const gpUnitEl = $('#gpUnit');
+const gpPctEl = $('#gpPct');
+const gpExpectedEl = $('#gpExpected');
+const gpRealizedEl = $('#gpRealized');
+const gpRemainingEl = $('#gpRemaining');
+const unitsCollectedEl = $('#unitsCollected');
+const kpiUnitGP = $('#kpiUnitGP');
+const kpiGPpct = $('#kpiGPpct');
+
 const sellerSelect = $('#sellerSelect');
 const addSellerBtn = $('#addSellerBtn');
 const deleteSellerBtn = $('#deleteSellerBtn');
 const newSellerName = $('#newSellerName');
 
-// SW register
-if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js')); }
+// SW register (v4)
+if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('./sw-v4.js')); }
 
 // Data model
 let sellers = {};
-const KEY = 'block_pos_multiseller_mobile_compact_v1';
+const KEY = 'block_pos_multiseller_mobile_profit_v4';
 
 function loadAll(){
   try{ sellers = JSON.parse(localStorage.getItem(KEY) || '{}'); }catch(e){ sellers = {}; }
@@ -263,11 +304,24 @@ function recalc(){
 
   const qty = +stockEl.value || 0;
   unitPriceEl.value = fmtMoney(price);
-  expectedEl.value  = fmtMoney(qty * price);
-  needsEl.value     = fmtMoney(qty * price);
+  const expectedRevenue = qty * price;
+  expectedEl.value  = fmtMoney(expectedRevenue);
+  needsEl.value     = fmtMoney(expectedRevenue);
 
   const mode = modeEl.value;
   const total = lines.reduce((a,b)=>a+(+b||0),0);
+  const effCash  = (mode==='By Cash') ? total : total * price;
+  const unitsCollected = (mode==='By Stock') ? total : (price>0 ? total/price : 0);
+  const revenueCollected = effCash;
+
+  // money/stock left
+  const moneyLeft = expectedRevenue - revenueCollected;
+  const stockLeft = qty - unitsCollected;
+
+  moneyLeftEl.value = fmtMoney(moneyLeft);
+  stockLeftEl.value = `${fmtQty(stockLeft)} ${unitEl.value||''}`.trim();
+
+  // totals display
   if(mode==='By Cash'){
     totalDisplayEl.value = fmtMoney(total);
     totalExplainerEl.textContent = 'Sum of cash entries';
@@ -276,15 +330,27 @@ function recalc(){
     totalExplainerEl.textContent = 'Sum of units entries';
   }
 
-  const effCash  = (mode==='By Cash') ? total : total * price;
-  const effUnits = (mode==='By Stock') ? total : (price>0 ? total/price : 0);
+  // --- Profit math ---
+  const gpUnit = price - op;
+  const gpPct  = price>0 ? (gpUnit/price)*100 : 0;
 
-  const expected = qty * price;
-  const moneyLeft = expected - effCash;
-  const stockLeft = (mode==='By Stock') ? (qty - effUnits) : (price>0 ? moneyLeft/price : 0);
+  const expectedCOGS = qty * op;
+  const expectedGP   = expectedRevenue - expectedCOGS; // qty * gpUnit
 
-  moneyLeftEl.value = fmtMoney(moneyLeft);
-  stockLeftEl.value = `${fmtQty(stockLeft)} ${unitEl.value||''}`.trim();
+  const cogsCollected = unitsCollected * op;
+  const gpCollected   = revenueCollected - cogsCollected;
+  const gpRemaining   = expectedGP - gpCollected;
+
+  // Set fields
+  gpUnitEl.value      = fmtMoney(gpUnit);
+  gpPctEl.value       = `${gpPct.toFixed(1)}%`;
+  gpExpectedEl.value  = fmtMoney(expectedGP);
+  gpRealizedEl.value  = fmtMoney(gpCollected);
+  gpRemainingEl.value = fmtMoney(gpRemaining);
+  unitsCollectedEl.value = `${fmtQty(unitsCollected)} ${unitEl.value||''}`.trim();
+
+  kpiUnitGP.textContent = fmtMoney(gpUnit);
+  kpiGPpct.textContent  = `${gpPct.toFixed(1)}%`;
 
   renderLines();
   saveSeller(sellerSelect.value);
@@ -339,10 +405,6 @@ document.getElementById('deleteSellerBtn').addEventListener('click', ()=>{
 });
 
 loadAll();
-</script>
-<script>
-// register SW late so HTML loads first
-if ('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js');}
 </script>
 </body>
 </html>
